@@ -47,9 +47,16 @@ def loginuser():
         for i in users_list:
             if ec == i["cnic"] and ep == i["password"]:
                 session['current_user'] = i
-                return redirect(url_for('profile'))
+                return redirect(url_for('dashboard'))
         return "invalid username or password! <a href='/login'>Dobara</a>"
     return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    user = session.get('current_user')
+    if not user:
+        return redirect(url_for('loginuser'))
+    return render_template('dashboard.html', user=user)
 
 @app.route('/profile')
 def profile():
