@@ -1,0 +1,136 @@
+{% set user = user or current_user or {} %}
+{% set name = user.get('username','User') %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ name }} - SwatWheels</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:'Segoe UI',Arial;background:#eef2ee;color:#1a2b22;padding-bottom:80px}
+.cover{height:170px;background:linear-gradient(120deg,#0f3d26,#1a5c3a,#f5a623);position:relative}
+.cover img{width:100%;height:100%;object-fit:cover}
+.cover .back{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.35);color:#fff;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.cover .edit-cover{position:absolute;right:14px;bottom:14px;background:#fff;color:#111;padding:7px 12px;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none}
+.wrap{max-width:480px;margin:-65px auto 0;padding:0 14px}
+.card{background:#fff;border-radius:22px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.08);margin-bottom:14px}
+.head{display:flex;gap:14px;align-items:flex-start}
+.avatar{width:88px;height:88px;min-width:88px;border-radius:22px;background:linear-gradient(135deg,#1a5c3a,#f5a623);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;border:4px solid #fff;text-transform:uppercase;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.head h2{margin:2px 0 4px;font-size:21px;line-height:1.1}
+.head p{margin:0;color:#777;font-size:13px}
+.badge{display:inline-block;margin-top:7px;background:#e8f5ee;color:#1a5c3a;border:1px solid #cfe3d3;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:800}
+.badge.gold{background:#fff7e6;color:#b77900;border-color:#ffe2a8}
+.badge.blue{background:#eef4ff;color:#2b4eff;border-color:#d0dcff}
+.verified{font-size:12px;color:#1a5c3a;margin-top:6px;font-weight:600}
+.actions{display:flex;gap:10px;margin-top:14px}
+.actions a{flex:1;text-align:center;padding:12px;border-radius:12px;text-decoration:none;font-weight:700;font-size:14px}
+.btn-green{background:#1a5c3a;color:#fff}
+.btn-white{background:#f2f5f2;color:#222;border:1px solid #ddd}
+.stats{display:flex;gap:10px;margin-top:14px}
+.stat{flex:1;background:#f7faf8;border-radius:16px;padding:12px 6px;text-align:center}
+.stat b{display:block;font-size:18px}
+.stat span{font-size:10px;color:#888;letter-spacing:.6px;font-weight:700}
+.tabs{display:flex;background:#e9efe9;padding:5px;border-radius:14px;margin-bottom:12px}
+.tabs button{flex:1;border:none;padding:10px;border-radius:10px;font-weight:700;cursor:pointer;background:transparent}
+.tabs button.active{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.title{font-size:12px;letter-spacing:1px;color:#888;font-weight:800;margin:4px 0 8px}
+.row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #f2f2f2}
+.row:last-child{border-bottom:none}
+.icon{width:44px;height:44px;min-width:44px;border-radius:13px;background:#eef7f0;display:flex;align-items:center;justify-content:center;color:#1a5c3a;font-size:17px}
+.row small{display:block;color:#888;font-size:12px}
+.row b{font-size:15px;word-break:break-all}
+.chip{display:inline-block;background:#f1f5f1;padding:7px 11px;border-radius:20px;font-size:12px;font-weight:600;margin:4px 4px 0 0}
+.menu{display:flex;justify-content:space-between;align-items:center;padding:14px 4px;border-bottom:1px solid #f2f2f2;text-decoration:none;color:#222;font-weight:600;font-size:15px}
+.menu:last-child{border-bottom:none}
+.menu i{color:#999}
+.btn-logout{display:block;width:100%;padding:14px;border-radius:14px;text-align:center;text-decoration:none;font-weight:700;background:#fff1f1;color:#c0392b;border:1px solid #f5c6c6;margin-top:10px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;padding:10px 0;max-width:480px;margin:auto}
+.bottom-nav a{color:#888;text-decoration:none;text-align:center;font-size:11px}
+.bottom-nav a.active{color:#1a5c3a}
+.bottom-nav i{display:block;font-size:20px;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <a class="back" href="/">←</a>
+  <a class="edit-cover" href="/"><i class="fa-solid fa-camera"></i> Edit Cover</a>
+</div>
+
+<div class="wrap">
+  <!-- HEAD -->
+  <div class="card">
+    <div class="head">
+      <div class="avatar">{{ name[:1] }}</div>
+      <div style="flex:1">
+        <h2>{{ name }}</h2>
+        <p><i class="fa-solid fa-location-dot"></i> Swat, Khyber Pakhtunkhwa</p>
+        {% if user.get('account_type') %}
+          <span class="badge gold"><i class="fa-solid fa-store"></i> {{ user.get('account_type') }} • Showroom</span>
+          <span class="badge blue">PREMIUM SELLER</span>
+        {% else %}
+          <span class="badge"><i class="fa-solid fa-user"></i> Individual Account</span>
+        {% endif %}
+        <div class="verified"><i class="fa-solid fa-circle-check"></i> Verified • Joined 2026</div>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="/" class="btn-green"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+      <a href="/" class="btn-white"><i class="fa-solid fa-share-nodes"></i> Share</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>0</b><span>ACTIVE ADS</span></div>
+      <div class="stat"><b>0</b><span>SOLD</span></div>
+      <div class="stat"><b>4.9 ★</b><span>RATING</span></div>
+      <div class="stat"><b>100%</b><span>PROFILE</span></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="active" onclick="showTab('about',this)">About</button>
+    <button onclick="showTab('ads',this)">My Ads</button>
+    <button onclick="showTab('reviews',this)">Reviews</button>
+  </div>
+
+  <!-- ABOUT -->
+  <div id="tab-about">
+    <div class="card">
+      <div class="title">PERSONAL INFORMATION</div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-user"></i></div><div><small>Full Name</small><b>{{ user.get('username','-') }}</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-id-card"></i></div><div><small>CNIC Number</small><b>{{ user.get('cnic','-') }}</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-envelope"></i></div><div><small>Email</small><b>{{ user.get('email','-') }}</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-phone"></i></div><div><small>Phone / WhatsApp</small><b>{{ user.get('phone','-') }}</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-clock"></i></div><div><small>Response Time</small><b>Within 1 hour</b></div></div>
+    </div>
+
+    {% if user.get('account_type') %}
+    <div class="card">
+      <div class="title">SHOWROOM INFORMATION</div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-building"></i></div><div><small>Account Type</small><b>{{ user.get('account_type','-') }}</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-calendar"></i></div><div><small>Establishment Year</small><b>{{ user.get('establishment_year','-') }}</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-location-dot"></i></div><div><small>Showroom Address</small><b>{{ user.get('showroom_address','-') }}</b></div></div>
+      <div style="margin-top:10px">
+        <span class="chip">🚗 Cars</span><span class="chip">🏍️ Bikes</span><span class="chip">🚐 Vans</span><span class="chip">✅ Trusted Dealer</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="title">ABOUT</div>
+      <p style="margin:0;line-height:1.6;color:#555;font-size:14px">
+        {% if user.get('account_type') %}
+          Welcome to {{ name }} — Swat ka trusted showroom. Humare paas verified cars aur bikes available hain. Visit karein ya WhatsApp pe rabta karein.
+        {% else %}
+          Hi, I'm {{ name }} from Swat. I love cars and bikes. Check my listings on SwatWheels!
+        {% endif %}
+      </p>
+    </div>
+  </div>
+
+  <!-- ADS -->
+  <div id="tab-ads" style="display:none">
+    <div class="card" style="text-align:center;padding:30px 18px">
+      <div style="font-size:40px">🚗</div>
+      <h3 style="margin:10px 0 5px">No Ads Yet</h3>
+      <p style="color:#888;font-size:14px;margin:0 0 14px">Apni pehli gaari ka ad lag

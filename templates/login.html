@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login - SwatWheels</title>
+<style>
+body{margin:0; font-family:Arial; background:#eef7f0; display:flex; justify-content:center; min-height:100vh;}
+.box{width:100%; max-width:420px; padding:35px 25px; text-align:center;}
+.icon{width:70px; height:70px; background:#e2efe6; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:35px; margin:30px auto 10px; border:1px solid #cfe3d3;}
+h1{margin:5px; font-size:34px;}
+p{color:#777; margin:5px 0 20px;}
+.tabs{display:flex; gap:10px; margin:15px 0;}
+.tab{flex:1; padding:13px; border-radius:12px; border:1px solid #d0ddd2; font-weight:bold; background:white; color:#999;}
+.tab.active{background:black; color:white; border-color:black;}
+label{display:block; text-align:left; font-weight:bold; font-size:12px; letter-spacing:1px; margin:15px 0 6px;}
+input{width:100%; padding:14px; border-radius:10px; border:1px solid #cfe3d3; box-sizing:border-box; font-size:15px; outline:none; background:white;}
+button{width:100%; padding:15px; background:black; color:white; border:none; border-radius:10px; font-weight:bold; letter-spacing:1px; margin-top:22px; font-size:15px; cursor:pointer;}
+.divider{display:flex; align-items:center; gap:10px; color:#999; font-size:12px; letter-spacing:1px; margin:22px 0;}
+.divider:before,.divider:after{content:""; flex:1; height:1px; background:#ddd;}
+.google{background:white; border:1px solid #cfe3d3; border-radius:10px; padding:13px; font-weight:bold; letter-spacing:1px;}
+.register{margin-top:15px; background:#e2efe6; border:1px solid #cfe3d3; padding:14px; border-radius:10px; color:#1a5c3a; font-weight:bold; font-size:13px; letter-spacing:1px;}
+a{color:inherit; text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="icon">🚗</div>
+<h1>Welcome Back</h1>
+<p>Log in to manage your listings and messages.</p>
+
+<div class="tabs">
+  <div class="tab active">CNIC</div>
+  <div class="tab">PHONE</div>
+</div>
+
+<form method="POST">
+  <label>CNIC NUMBER</label>
+  <input type="text" name="cnic" placeholder="e.g. 15602-1234567-1" required>
+  <label>PASSWORD</label>
+  <input type="password" name="password" placeholder="........" required>
+  <button type="submit">SECURE SIGN IN</button>
+</form>
+
+<div class="divider">OR CONTINUE WITH</div>
+<div class="google">G &nbsp; GOOGLE</div>
+<a href="/register"><div class="register">DON'T HAVE AN ACCOUNT? REGISTER</div></a>
+
+</div>
+</body>
+</html>
