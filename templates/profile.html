@@ -102,6 +102,7 @@
       <div class="row"><div class="icon"><i class="fa-solid fa-envelope"></i></div><div><small>Email</small><b>{{ user.get('email','-') }}</b></div></div>
       <div class="row"><div class="icon"><i class="fa-solid fa-phone"></i></div><div><small>Phone / WhatsApp</small><b>{{ user.get('phone','-') }}</b></div></div>
       <div class="row"><div class="icon"><i class="fa-solid fa-clock"></i></div><div><small>Response Time</small><b>Within 1 hour</b></div></div>
+      <div class="row"><div class="icon"><i class="fa-solid fa-comment"></i></div><div><small>Bio</small><b>{{ user.get('bio','-') }}</b></div></div>
     </div>
 
     {% if user.get('account_type') %}
@@ -120,7 +121,7 @@
       <div class="title">ABOUT</div>
       <p style="margin:0;line-height:1.6;color:#555;font-size:14px">
         {% if user.get('account_type') %}
-          Welcome to {{ name }} — Swat ka trusted showroom. Humare paas verified cars aur bikes available hain. Visit karein ya WhatsApp pe rabta karein.
+          Welcome to {{ name }} — in Swat trusted showroom. we have verified cars and bikes available here. Visit us or chat on WhatsApp.
         {% else %}
           Hi, I'm {{ name }} from Swat. I love cars and bikes. Check my listings on SwatWheels!
         {% endif %}

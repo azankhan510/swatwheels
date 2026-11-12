@@ -28,9 +28,9 @@ a{color:inherit; text-decoration:none;}
 <form method="POST">
   <label>YOU ARE?</label>
   <select name="acc_type" id="acc_type" onchange="showExtra()">
-    <option value="1">1: normal user</option>
-    <option value="2">2: showroom or company</option>
-    <option value="3">3: admin</option>
+    <option value="1">1: Individual</option>
+    <option value="2">2: Showroom or Company</option>
+    <option value="3">3: Admin</option>
   </select>
 
   <label>FULL NAME</label>
@@ -56,6 +56,9 @@ a{color:inherit; text-decoration:none;}
 
   <label>PASSWORD</label>
   <input type="password" name="password" placeholder="Create a strong password" required>
+  
+  <label>BIO</label>
+  <input type="text" name="bio" placeholder="Write a short bio about yourself" required>
 
   <div class="check"><input type="checkbox" required> <span>I agree to Terms & Conditions</span></div>
   <button class="btn" type="submit">Create Account</button>

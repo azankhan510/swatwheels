@@ -20,7 +20,8 @@ def registaration():
             email = request.form['email']
             phone = request.form['phone']
             password = request.form['password']
-            record = {"username": username, "cnic": cnic, "email": email, "phone": phone, "password": password}
+            bio = request.form ['bio']          
+            record = {"username": username, "cnic": cnic, "email": email, "phone": phone, "password": password, "bio": bio}
             users_list.append(record)
             return "individual account registered successfully! <br><a href='/login'>Login Karo</a>"
         elif acc_type == 2:
@@ -32,7 +33,8 @@ def registaration():
             establishment_year = request.form['establishment_year']
             showroom_address = request.form['showroom_address']
             password = request.form['password']
-            record = {"username": username, "cnic": cnic, "email": email, "phone": phone, "establishment_year": establishment_year, "showroom_address": showroom_address, "password": password, "type": account_type.lower().strip(),}
+            bio = request.form['bio']
+            record = {"username": username, "cnic": cnic, "email": email, "phone": phone, "establishment_year": establishment_year, "showroom_address": showroom_address, "password": password, "type": account_type.lower().strip(), "bio": bio}
             users_list.append(record)
             return "showroom or company account registered successfully! <br><a href='/login'>Login Karo</a>"
         else:
@@ -56,7 +58,33 @@ def dashboard():
     user = session.get('current_user')
     if not user:
         return redirect(url_for('loginuser'))
-    return render_template('dashboard.html', user=user)
+        
+    return render_template('dashboard.html', user=user, cars=cars_list)
+
+@app.route('/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    user = session.get('current_user')
+    if not user:
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'POST':
+        user['username'] = request.form['username']
+        user['cnic'] = request.form['cnic']
+        user['email'] = request.form['email']
+        user['phone'] = request.form['phone']
+        user['bio'] = request.form['bio']
+        if 'establishment_year' in user:
+            user['establishment_year'] = request.form['establishment_year']
+            user['showroom_address'] = request.form['showroom_address']
+        return redirect(url_for('dashboard'))
+    
+    return render_template('edit_profile.html', user=user)
+
+@app.route('/delete-car-listing/<int:index>', methods=['POST'])
+def delete_car_listing(index):
+    if 0 <= index < len(cars_list):
+        del cars_list[index]
+    return redirect(url_for('dashboard'))
 
 @app.route('/profile')
 def profile():
@@ -76,8 +104,8 @@ def logout():
             return "still logged in! <br><a href='/profile'>Profile</a>"
     return render_template('logout.html')
 
-@app.route('/add-car', methods=['GET', 'POST'])
-def add_car():
+@app.route('/list-car', methods=['GET', 'POST'])
+def list_car():
     if request.method == 'POST':
         car = {
            'company': request.form['company'], 
@@ -88,7 +116,7 @@ def add_car():
         }
         cars_list.append(car)
         return redirect(url_for('home'))
-    return render_template('add_car.html')
+    return render_template('list_car.html')
 
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
