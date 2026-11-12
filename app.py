@@ -4,6 +4,7 @@ app = Flask(__name__)
 app.secret_key = "swatwheels123"
 
 users_list = []
+cars_list = []
 
 @app.route('/')
 def home():
@@ -67,6 +68,20 @@ def logout():
         else:
             return "still logged in! <br><a href='/profile'>Profile</a>"
     return render_template('logout.html')
+
+@app.route('/add-car', methods=['GET', 'POST'])
+def add_car():
+    if request.method == 'POST':
+        car = {
+           'company': request.form['company'], 
+            'title': request.form['title'],
+            'price': request.form['price'],
+            'model': request.form['model'],
+            'city': request.form['city']
+        }
+        cars_list.append(car)
+        return redirect(url_for('home'))
+    return render_template('add_car.html')
 
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
