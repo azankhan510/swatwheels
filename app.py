@@ -105,7 +105,7 @@ def logout():
     return render_template('logout.html')
 
 @app.route('/list-car', methods=['GET', 'POST'])
-def list_car():
+def add_car():
     if request.method == 'POST':
         car = {
            'company': request.form['company'], 
@@ -116,7 +116,7 @@ def list_car():
         }
         cars_list.append(car)
         return redirect(url_for('home'))
-    return render_template('list_car.html')
+    return render_template('add_car.html')
 
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
