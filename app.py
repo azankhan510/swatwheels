@@ -58,7 +58,7 @@ def loginuser():
 @app.route('/dashboard')
 def dashboard():
     if 'username' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('loginuser'))
     car = get_all_cars()
     user = {'username': session['username']}
 
@@ -91,7 +91,7 @@ def add_car_db(company, title, price, model, city,):
                    (company, title, price, model, city))
     conn.commit()
     conn.close()
-    
+
 
 
 @app.route('/delete-car-listing/<int:id>', methods=['POST'])
@@ -124,7 +124,7 @@ def logout():
 @app.route('/list-car', methods=['GET', 'POST'])
 def add_car():
     if 'username' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('loginuser'))
     if request.method == 'POST':
         company = request.form['company']
         title = request.form['title']
