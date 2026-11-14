@@ -21,6 +21,16 @@ def create_tables():
    conn.close()
    print("user table completed!")
 
+   cursor.execute(''' create table if not exists cars (id INTEGER PRIMARY KEY AUTOINCREMENT,
+   company TEXT NOT NULL,
+    title TEXT NOT NULL,
+    price TEXT NOT NULL,
+    model TEXT NOT NULL,
+    city TEXT NOT NULL)''') 
+   conn.commit()
+   conn.close()
+   print("car table completed!")
+
 def add_user(username, cnic, email, phone, password, type, establishment_year=None, showroom_address=None):
     conn = get_connection()
     cursor = conn.cursor()
@@ -36,6 +46,24 @@ def get_user(username, password):
          user = cursor.fetchone()
          conn.close()
          return user
+
+def add_car(company, title, price, model, city):
+      conn = get_connection()
+      cursor = conn.cursor()
+      cursor.execute("INSERT INTO cars (company, title, price, model, city) VALUES (?, ?, ?, ?, ?)", (company, title, price, model, city))
+      conn.commit()
+      conn.close()
+      print(f"car {title} saved successfully!")
+
+def get_all_cars():     
+       conn = get_connection()
+       conn.row_factory = sqlite3.Row
+       cursor = conn.cursor()
+       cursor.execute('SELECT * FROM cars')
+       cars = cursor.fetchall()
+       conn.close()
+       return cars
+
 
 if __name__ == "__main__":
     create_tables()

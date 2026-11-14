@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 import os
+
+from database import get_all_cars, get_connection
 app = Flask(__name__)
 app.secret_key = "swatwheels123"
 
@@ -55,11 +57,13 @@ def loginuser():
 
 @app.route('/dashboard')
 def dashboard():
-    user = session.get('current_user')
-    if not user:
-        return redirect(url_for('loginuser'))
-        
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    car = get_all_cars()
+    user = {'username': session['username']}
+
     return render_template('dashboard.html', user=user, cars=cars_list)
+
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -80,10 +84,23 @@ def edit_profile():
     
     return render_template('edit_profile.html', user=user)
 
-@app.route('/delete-car-listing/<int:index>', methods=['POST'])
-def delete_car_listing(index):
-    if 0 <= index < len(cars_list):
-        del cars_list[index]
+def add_car_db(company, title, price, model, city,):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO cars(company, title, price, model, city)values(?,?,?,?,?,?)",
+                   (company, title, price, model, city))
+    conn.commit()
+    conn.close()
+    
+
+
+@app.route('/delete-car-listing/<int:id>', methods=['POST'])
+def delete_car_listing(id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM cars WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
     return redirect(url_for('dashboard'))
 
 @app.route('/profile')
@@ -106,18 +123,19 @@ def logout():
 
 @app.route('/list-car', methods=['GET', 'POST'])
 def add_car():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     if request.method == 'POST':
-        car = {
-           'company': request.form['company'], 
-            'title': request.form['title'],
-            'price': request.form['price'],
-            'model': request.form['model'],
-            'city': request.form['city']
-        }
-        cars_list.append(car)
-        return redirect(url_for('home'))
-    return render_template('add_car.html')
+        company = request.form['company']
+        title = request.form['title']
+        price = request.form['price']
+        model = request.form['model']
+        city = request.form['city']
+        add_car_db(company, title, price, model, city)
+        return redirect(url_for('dashboard'))
+    return render_template('list_car.html')
 
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
     app.run(host='0.0.0.0', port=port, debug= True)
+
