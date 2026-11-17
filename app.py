@@ -55,15 +55,76 @@ def loginuser():
         return "invalid username or password! <a href='/login'>Dobara</a>"
     return render_template('login.html')
 
-@app.route('/dashboard')
 def dashboard():
-    if 'username' not in session:
-        return redirect(url_for('loginuser'))
-    car = get_all_cars()
-    user = {'username': session['username']}
+    print("/n===== CAR MARKETPLACE DASHBOARD=====")
+    print("1. view available cars")
+    print("2. search cars")
+    print("3. add car")
+    print("4. my listing")
+    print("5. delete car listing")
+    print("6. my profile")
+    print("7. logout")
 
-    return render_template('dashboard.html', user=user, cars=cars_list)
+    choice = input("ENTER YOUR CHOICE")
+    if choice == "1":
+        view_available_cars()
+    elif choice == "2":
+        search_cars()
+    elif choice ==  "3":
+        add_car()
+    elif choice == "4":
+        my_listing()
+    elif choice == "5":
+        delete_car_listing()   
+    elif choice == "6":
+        my_profile
+    elif choice == "7":
+        logout()   
+    else:
+        print ("invalid choice")
 
+def view_available_cars():
+    print ("available cars ")
+    if not cars_list:
+        print("no cars available!")
+    else:
+        for car in cars_list:
+            print("car ID:",car["id"])
+            print("brand:", car["brand"])
+            print("engine cc:", car ["engine_cc"])
+            print("model:", car ["modle"])
+            print("year:", car ["year"])
+            print("price:", car ["price"])
+            print("-----------------------------")
+
+        
+
+def search_cars():
+    print("===== SEARCH CARS =====")
+    brand = input ("enter car brand:")
+    print("searching for :", brand)
+    engine_cc = input ("enter engine cc:")
+    print("searching for :",engine_cc)
+    year = input ("enter car year:")
+    print("searching for :", year)
+    model = input ("enter car model")
+    print("searching for :", model)
+    budget = input ("enter car budget")
+    print("searching for :", budget)
+    fuel = input ("enter fuel type:")
+    print("searching for :",fuel)
+    transmission = input ("enter transmission type:")
+    print("searching for:",transmission)
+
+def add_car():
+    
+
+
+
+
+    
+
+    
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -120,20 +181,6 @@ def logout():
         else:
             return "still logged in! <br><a href='/profile'>Profile</a>"
     return render_template('logout.html')
-
-@app.route('/list-car', methods=['GET', 'POST'])
-def add_car():
-    if 'username' not in session:
-        return redirect(url_for('loginuser'))
-    if request.method == 'POST':
-        company = request.form['company']
-        title = request.form['title']
-        price = request.form['price']
-        model = request.form['model']
-        city = request.form['city']
-        add_car_db(company, title, price, model, city)
-        return redirect(url_for('dashboard'))
-    return render_template('list_car.html')
 
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
