@@ -1,6 +1,8 @@
+from operator import add
+
 from flask import Flask, request, render_template, redirect, url_for, session
 import os
-
+from database import add_car_db 
 from database import get_all_cars, get_connection
 app = Flask(__name__)
 app.secret_key = "swatwheels123"
@@ -56,7 +58,7 @@ def loginuser():
     return render_template('login.html')
 
 def dashboard():
-    print("/n===== CAR MARKETPLACE DASHBOARD=====")
+    print("===== CAR MARKETPLACE DASHBOARD=====")
     print("1. view available cars")
     print("2. search cars")
     print("3. add car")
@@ -64,6 +66,7 @@ def dashboard():
     print("5. delete car listing")
     print("6. my profile")
     print("7. logout")
+    print("8. update profile")
 
     choice = input("ENTER YOUR CHOICE")
     if choice == "1":
@@ -77,9 +80,11 @@ def dashboard():
     elif choice == "5":
         delete_car_listing()   
     elif choice == "6":
-        my_profile
+        my_profile()
     elif choice == "7":
         logout()   
+    elif choice == "8":
+        update_profile()
     else:
         print ("invalid choice")
 
@@ -116,14 +121,51 @@ def search_cars():
     transmission = input ("enter transmission type:")
     print("searching for:",transmission)
 
+@app.route('/add_car', methods = ['get','post'])
 def add_car():
-    
+    print("======ADD YOUR CAR======")
+
+brand = request.form['brand']
+engine_cc = request.form['engine_cc']
+year = request.form['year']
+model = request.form['model']
+fuel = request.form['fuel']
+price = request.form['price']
+transmission = request.form['transmission']
+condition = request.form['condition']
+milage = request.form['milage']
+location = request.form['location']
+
+if request.method == 'POST':
+    owner = session.get ("user")
+    add_car_db(brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location)
+    return redirect("/dashboard")
+
+    return render_template("add_car.html")
 
 
+@app.route("/my_listing")
+def my_listing():
+    print("===== MY CAR LISTINGS")
 
+    if not cars_list:
+        return "you have not added any car yet!"
+        
 
-    
+    else:
+        for car in cars_list:
+            print("brand:", car ["brand"])
+            print("engine_cc:", car ["engine_cc"])
+            print("year:", car ["year"])
+            print("model:", car ["model"])
+            print("fuel:", car ["fuel"])
+            print("price:", car ["price"])
+            print("transmission:", car ["transmission"])
+            print("condition:", car ["condition"])
+            print("milage:", car ["milage"])
+            print("location:", car ["location"])
 
+        return render_template("my listing.html", car = cars_list)
     
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
@@ -145,15 +187,13 @@ def edit_profile():
     
     return render_template('edit_profile.html', user=user)
 
-def add_car_db(company, title, price, model, city,):
+def add_car_db(brand, engine_cc, year, model,fuel, price, transmission, condition , milage, location):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO cars(company, title, price, model, city)values(?,?,?,?,?,?)",
-                   (company, title, price, model, city))
+    cursor.execute("INSERT INTO cars(brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location)values(?,?,?,?,?,?)",
+                   (brand, engine_cc, year, price, model, fuel, transmission, condition, milage, location))
     conn.commit()
     conn.close()
-
-
 
 @app.route('/delete-car-listing/<int:id>', methods=['POST'])
 def delete_car_listing(id):
@@ -181,6 +221,23 @@ def logout():
         else:
             return "still logged in! <br><a href='/profile'>Profile</a>"
     return render_template('logout.html')
+
+
+@app.route("/my profile")
+def my_profile():
+    user = session.get(user)
+    if not user:
+       return redirect ("/login")
+    return render_template("my_profile.html", user = user)
+
+@app.route("/update_profile", methods = ["GET" , "POST"])
+def update_profile():
+
+    user = session.get ("user")
+
+    if not user :
+        return redirect ("/login")
+    return render_template("update_profile.html", user = user)
 
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
