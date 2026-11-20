@@ -14,27 +14,34 @@ def create_tables():
     email TEXT UNIQUE NOT NULL,
      phone TEXT NOT NULL,
       password TEXT NOT NULL,
-       type TEXT NOT NULL,
-        establishment_year TEXT,
-        showroom_address TEXT)''')
+       bio TEXT NOT NULL, 
+        type TEXT NOT NULL,
+         establishment_year TEXT,
+         showroom_address TEXT)''')
    conn.commit()
-   conn.close()
    print("user table completed!")
 
    cursor.execute(''' create table if not exists cars (id INTEGER PRIMARY KEY AUTOINCREMENT,
-   company TEXT NOT NULL,
-    title TEXT NOT NULL,
-    price TEXT NOT NULL,
+    brand TEXT NOT NULL,
+    engine_cc TEXT NOT NULL,
+    year TEXT NOT NULL,
     model TEXT NOT NULL,
-    city TEXT NOT NULL)''') 
+    fuel TEXT NOT NULL,
+    price TEXT NOT NULL,
+    transmission TEXT NOT NULL,
+    condition TEXT NOT NULL, 
+    milage TEXT NOT NULL,
+    location TEXT NOT NULL)''') 
    conn.commit()
    conn.close()
    print("car table completed!")
+   conn.close()
 
-def add_user(username, cnic, email, phone, password, type, establishment_year=None, showroom_address=None):
+def add_user(username, cnic, email, phone, password, bio, type, establishment_year=None, showroom_address=None):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (username, cnic, email, phone, password, type, establishment_year, showroom_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (username, cnic, email, phone, password, type, establishment_year, showroom_address))
+    cursor.execute("INSERT INTO users(username, cnic, email, phone, password, bio, type, establishment_year, showroom_address) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (username, cnic, email, phone, password,bio, type, establishment_year, showroom_address))
     conn.commit()
     conn.close()
     print(f"user {username} saved successfully!")
@@ -47,13 +54,14 @@ def get_user(username, password):
          conn.close()
          return user
 
-def add_car(company, title, price, model, city):
+def add_car(brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location):
       conn = get_connection()
       cursor = conn.cursor()
-      cursor.execute("INSERT INTO cars (company, title, price, model, city) VALUES (?, ?, ?, ?, ?)", (company, title, price, model, city))
+      cursor.execute("INSERT INTO cars (brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                      (brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location))
       conn.commit()
       conn.close()
-      print(f"car {title} saved successfully!")
+      print(f"car {brand} {model} saved successfully!")
 
 def get_all_cars():     
        conn = get_connection()

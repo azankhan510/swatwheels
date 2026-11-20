@@ -4,6 +4,7 @@ from flask import Flask, request, render_template, redirect, url_for, session
 import os
 from database import add_car_db 
 from database import get_all_cars, get_connection
+from database import add_user , get_user , add_car
 app = Flask(__name__)
 app.secret_key = "swatwheels123"
 
@@ -25,9 +26,8 @@ def registaration():
             phone = request.form['phone']
             password = request.form['password']
             bio = request.form ['bio']          
-            record = {"username": username, "cnic": cnic, "email": email, "phone": phone, "password": password, "bio": bio}
-            users_list.append(record)
-            return "individual account registered successfully! <br><a href='/login'>Login Karo</a>"
+            add_user(username, cnic, email, phone, password, bio)
+            return redirect ("/login")
         elif acc_type == 2:
             username = request.form['username']
             cnic = request.form['cnic']
@@ -38,9 +38,11 @@ def registaration():
             showroom_address = request.form['showroom_address']
             password = request.form['password']
             bio = request.form['bio']
-            record = {"username": username, "cnic": cnic, "email": email, "phone": phone, "establishment_year": establishment_year, "showroom_address": showroom_address, "password": password, "type": account_type.lower().strip(), "bio": bio}
-            users_list.append(record)
-            return "showroom or company account registered successfully! <br><a href='/login'>Login Karo</a>"
+            add_user = (username, cnic, email, phone,establishment_year,
+                        showroom_address,account_type, password, bio,
+                          "showroom")
+            return redirect ("/login")
+        
         else:
             return "invalid account type!"
     return render_template('register.html')
@@ -58,88 +60,58 @@ def loginuser():
     return render_template('login.html')
 
 def dashboard():
-    print("===== CAR MARKETPLACE DASHBOARD=====")
-    print("1. view available cars")
-    print("2. search cars")
-    print("3. add car")
-    print("4. my listing")
-    print("5. delete car listing")
-    print("6. my profile")
-    print("7. logout")
-    print("8. update profile")
+    if "user" not in session:
+       return redirect("/login")
 
-    choice = input("ENTER YOUR CHOICE")
-    if choice == "1":
-        view_available_cars()
-    elif choice == "2":
-        search_cars()
-    elif choice ==  "3":
-        add_car()
-    elif choice == "4":
-        my_listing()
-    elif choice == "5":
-        delete_car_listing()   
-    elif choice == "6":
-        my_profile()
-    elif choice == "7":
-        logout()   
-    elif choice == "8":
-        update_profile()
-    else:
-        print ("invalid choice")
+    return render_template ("dashboard.html", user=session.get("user"))
 
+
+@app.route('/available car')
 def view_available_cars():
-    print ("available cars ")
-    if not cars_list:
-        print("no cars available!")
-    else:
-        for car in cars_list:
-            print("car ID:",car["id"])
-            print("brand:", car["brand"])
-            print("engine cc:", car ["engine_cc"])
-            print("model:", car ["modle"])
-            print("year:", car ["year"])
-            print("price:", car ["price"])
-            print("-----------------------------")
+    cars_list = get_all_cars()
+    return render_template ("available_car.html", cars=cars_list)
 
-        
-
+@app.route('/search', methods = ['GET','POST'])
 def search_cars():
+
+    brand = request.args.get("brand","")
+    engine_cc = request.args.get("engine_cc","")
+    year = request.args.get("year","")
+    model = request.args.get("model","")
+    budget = request.args.get("budget","")
+    fuel = request.args.get("fuel","")
+    transmission = request.args.get("transmission","")
+
     print("===== SEARCH CARS =====")
-    brand = input ("enter car brand:")
     print("searching for :", brand)
-    engine_cc = input ("enter engine cc:")
     print("searching for :",engine_cc)
-    year = input ("enter car year:")
     print("searching for :", year)
-    model = input ("enter car model")
     print("searching for :", model)
-    budget = input ("enter car budget")
     print("searching for :", budget)
-    fuel = input ("enter fuel type:")
     print("searching for :",fuel)
-    transmission = input ("enter transmission type:")
     print("searching for:",transmission)
+
+    return render_template ("search.html")
 
 @app.route('/add_car', methods = ['get','post'])
 def add_car():
     print("======ADD YOUR CAR======")
 
-brand = request.form['brand']
-engine_cc = request.form['engine_cc']
-year = request.form['year']
-model = request.form['model']
-fuel = request.form['fuel']
-price = request.form['price']
-transmission = request.form['transmission']
-condition = request.form['condition']
-milage = request.form['milage']
-location = request.form['location']
+    if request.method == 'POST':
+        brand = request.form['brand']
+        engine_cc = request.form['engine_cc']
+        year = request.form['year']
+        model = request.form['model']
+        fuel = request.form['fuel']
+        price = request.form['price']
+        transmission = request.form['transmission']
+        condition = request.form['condition']
+        milage = request.form['milage']
+        location = request.form['location']
 
-if request.method == 'POST':
-    owner = session.get ("user")
-    add_car_db(brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location)
-    return redirect("/dashboard")
+        owner = session.get ("user")
+        add_car_db(brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location)
+        return redirect("/dashboard")
 
     return render_template("add_car.html")
 
@@ -242,4 +214,6 @@ def update_profile():
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
     app.run(host='0.0.0.0', port=port, debug= True)
+
+
 
