@@ -1,10 +1,11 @@
 from operator import add
 
 from flask import Flask, request, render_template, redirect, url_for, session
+import sqlite3
 import os
-from database import add_car_db 
+from database import add_car_db
 from database import get_all_cars, get_connection
-from database import add_user , get_user , add_car
+from database import add_user , get_user
 app = Flask(__name__)
 app.secret_key = "swatwheels123"
 
@@ -38,8 +39,8 @@ def registaration():
             showroom_address = request.form['showroom_address']
             password = request.form['password']
             bio = request.form['bio']
-            add_user = (username, cnic, email, phone,establishment_year,
-                        showroom_address,account_type, password, bio,
+            add_user = (username, cnic, email, phone, establishment_year,
+                        showroom_address, account_type, password, bio,
                           "showroom")
             return redirect ("/login")
         
@@ -214,6 +215,25 @@ def update_profile():
 if __name__ == '__main__':
     port = int (os. environ.get('port',5000))
     app.run(host='0.0.0.0', port=port, debug= True)
+
+@app.route('/add_showroom', methods= ['GET', 'POST'])
+def add_showroom():
+    if request.method == 'POST':
+        name = request.form ['name']
+        owner_name = request.form ['owner_name']
+        city = request.form ['city']
+        location = request.form ['location']
+        phone = request.form ['phone']
+
+        conn = sqlite3.connect("swatwheels.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO showrooms(name, owner_name, city, location, phone) VALUES(?, ?, ?, ?, ?,)",
+        (name, owner_name, city, location, phone))
+
+        conn.commit()
+        conn.close()
+        return "showroom added!"
+    return render_template ("add_showroom.html")
 
 
 

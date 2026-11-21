@@ -32,6 +32,22 @@ def create_tables():
     condition TEXT NOT NULL, 
     milage TEXT NOT NULL,
     location TEXT NOT NULL)''') 
+
+   cursor.execute('''CREATE TABLE IF NOT EXISTS showrooms(
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   username TEXT NOT NULL,
+   cnic TEXT NOT NULL,
+   email TEXT NOT NULL,
+   account_type TEXT NOT NULL,
+   establishment_year TEXT NOT NULL,
+   showroom_address TEXT NOT NULL,
+   password TEXT NOT NULL,
+   phone TEXT NOT NULL,
+   bio TEXT
+   )''')
+
+   print ("showroom table completed!")
+
    conn.commit()
    conn.close()
    print("car table completed!")
@@ -54,7 +70,7 @@ def get_user(username, password):
          conn.close()
          return user
 
-def add_car(brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location):
+def add_car_db (brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location):
       conn = get_connection()
       cursor = conn.cursor()
       cursor.execute("INSERT INTO cars (brand, engine_cc, year, model, fuel, price, transmission, condition, milage, location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
