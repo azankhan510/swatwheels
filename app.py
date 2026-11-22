@@ -212,9 +212,7 @@ def update_profile():
         return redirect ("/login")
     return render_template("update_profile.html", user = user)
 
-if __name__ == '__main__':
-    port = int (os. environ.get('port',5000))
-    app.run(host='0.0.0.0', port=port, debug= True)
+
 
 @app.route('/add_showroom', methods= ['GET', 'POST'])
 def add_showroom():
@@ -229,11 +227,16 @@ def add_showroom():
         cursor = conn.cursor()
         cursor.execute("INSERT INTO showrooms(name, owner_name, city, location, phone) VALUES(?, ?, ?, ?, ?,)",
         (name, owner_name, city, location, phone))
-
         conn.commit()
         conn.close()
         return "showroom added!"
     return render_template ("add_showroom.html")
 
+def save_image(file):
+        if file and file.filename != '':
+                 
 
+            if __name__ == '__main__':
+             port = int (os. environ.get('port',5000))
+             app.run(host='0.0.0.0', port=port, debug= True)
 
