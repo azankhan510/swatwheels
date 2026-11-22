@@ -48,6 +48,31 @@ def create_tables():
 
    print ("showroom table completed!")
 
+   cursor.execute(''' CREATE TABLE IF NOT EXISTS car_images (id
+   INTEGER PRIMARY KEY AUTOINCREMENT, 
+   car_id INTEGER NOT NULL,
+   image_path TEXT NOT NULL,
+   FOREIGN KEY (car_id) REFERENCES cars(id))''')
+   print ("car_images table completed!")
+   try:
+        cursor.execute("ALTER TABLE users ADD COLUMN profile_picture TEXT")
+   except:
+       pass
+   try:
+         cursor.execute("ALTER TABLE users ADD COLUMN cover_picture TEXT")
+   except:
+       pass
+
+   try:
+      cursor.execute("ALTER TABLE showrooms ADD COLUMN showroom_picture TEXT")
+   except:
+       pass
+   
+   try:
+      cursor.execute("ALTER TABLE showrooms ADD COLUMN cover_picture TEXT")
+   except:
+       pass
+
    conn.commit()
    conn.close()
    print("car table completed!")
