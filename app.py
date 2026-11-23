@@ -1,13 +1,19 @@
-from operator import add
+from operator import add, is_
 
 from flask import Flask, request, render_template, redirect, url_for, session
 import sqlite3
 import os
+import time
+from werkzeug.utils import secure_filename
 from database import add_car_db
 from database import get_all_cars, get_connection
 from database import add_user , get_user
 app = Flask(__name__)
 app.secret_key = "swatwheels123"
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 users_list = []
 cars_list = []
@@ -233,7 +239,67 @@ def add_showroom():
     return render_template ("add_showroom.html")
 
 def save_image(file):
-        if file and file.filename != '':
+        if file and file.filename!= '':
+            filename = secure_filename(file.filename)
+            new_name = str(int(time.time())) + "_" + filename
+            path = os.path.join(app.config['UPLOAD_FOLDER'], new_name)
+            file.save(path)
+            return "uploads/" + new_name
+        return None
+
+def update_profile_photo(user_id, file):
+    path = save_image(file)
+    if path:
+            conn = sqlite3.connect('car_market.db')
+            cursor = conn.cursor()
+            cursor.execute("UPDATE users SET profile_photo = ? WHERE id = ?"(path,user_id))
+            conn.commit()
+            conn.close
+            return True
+    return False
+
+def update_cover_photo(user_id, file):
+            path =save_image(file)
+            if path:
+                conn = sqlite3.connect('car market.db')
+                cursor = conn.cursor()
+                cursor.execute("UPDATE users SET cover_photo = ? WHERE id = ?", (path,user_id))
+                conn.commit
+                conn.close
+                return True
+            return False
+
+def update_showroom_photo(showroom_id,file, is_cover=False):
+            path = save_image(file)
+            if path:
+                conn = sqlite3.connect('car market.db')
+                cursor = conn.cursor()
+                if is_cover:
+                    cursor.execute("UPDATE showrooms SET cover_photo = ? WHERE id = ?", (path, showroom_id))
+                else:
+                    cursor.execute("UPDATE showrooms SET showroom_photo = ?", (path, showroom_id))
+                    conn.commit
+                    conn.close
+                    return True
+                return False
+
+def save_car_images(car_id, files):
+            conn = sqlite3.connect('car_market.db')
+            cursor = conn.cursor()
+            for i, file in enumerate(file): 
+                 path = save_image(file)
+                 if path:
+                    is_main = 1 if i == 0 else  0
+                 cursor.execute("INSERT INTO car_images (car_id, image_path, is_main) VALUES(?,?,?)", (car_id, path, is_main)) 
+                 conn.commit 
+                 conn.close
+                 return True
+
+                     
+   
+
+        
+            
                  
 
             if __name__ == '__main__':
