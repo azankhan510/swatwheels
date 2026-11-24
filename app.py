@@ -295,14 +295,39 @@ def save_car_images(car_id, files):
                  conn.close
                  return True
 
-                     
+@app.route('/upload_profile', methods=['POST'])
+def upload_profile():
+    if 'user_id' not in session:
+        return redirect('/login')
+    file = request.files.get('profile_photo')
+    update_profile_photo(session['user_id'], file)
+    return redirect('/profile')
+
+
+@app.route('/upload_cover', methods=['POST'])
+def upload_cover():
+    if 'user_id' not in session:
+        return redirect('/login')
+    file = request.files.get('cover_photo')
+    update_cover_photo(session['user_id'], file)
+    return redirect('/profile')
+
+@app.route('/upload_showroom_photo/<int:showroom_id>', methods=['POST'])
+def upload_showroom(showroom_id):
+    file = request.files.get('showroom_photo')
+    is_cover = request.form.get('is_cover') == 'yes'
+    update_showroom_photo(showroom_id, file, is_cover)
+    return redirect('/showroom/' + str(showroom_id))
+
+@app.route('/upload_car_images/<int:car_id>', methods=['POST'])
+def upload_car_images_route(car_id):
+    files = request.files.getlist('car_images')
+    save_car_images(car_id, files)
+    return redirect('/car/' + str(car_id))   
+
+     
    
-
-        
-            
-                 
-
-            if __name__ == '__main__':
+if __name__ == '__main__':
              port = int (os. environ.get('port',5000))
              app.run(host='0.0.0.0', port=port, debug= True)
 
