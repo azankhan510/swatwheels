@@ -412,6 +412,30 @@ def showroom_detail(showroom_id):
     cars = get_cars_by_showroom(showroom_id)
     return render_template('showroom.html', showroom=showroom, cars=cars)
 
+@app.route('/special-search')
+def special_search():
+    city = request.args.get('city')
+    showroom_id = request.args.get('showroom')
+
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    if showroom_id:
+        cursor.execute('SELECT * FROM cars WHERE showroom_id = ?', (showroom_id,))
+    elif city:
+        cursor.execute('''SELECT cars.* FROM cars 
+                          JOIN showrooms ON cars.showroom_id = showrooms.id 
+                          WHERE showrooms.city = ?''', (city,))
+    else:
+        cursor.execute('SELECT * FROM cars')
+
+    cars = cursor.fetchall()
+    conn.close()
+
+    showrooms = get_all_showrooms()
+    return render_template('special_search.html', cars=cars, showrooms=showrooms, selected_city=city, selected_showroom=showroom_id)
+
 if __name__ == '__main__':
              port = int (os. environ.get('port',5000))
              app.run(host='0.0.0.0', port=port, debug= True)

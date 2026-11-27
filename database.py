@@ -121,6 +121,14 @@ def get_all_cars():
        conn.close()
        return cars
 
+def get_all_showrooms():
+    conn = get_connection()
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM showrooms")
+    showrooms = cursor.fetchall()
+    conn.close()
+    return showrooms
 
 if __name__ == "__main__":
     create_tables()
