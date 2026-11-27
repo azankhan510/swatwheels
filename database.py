@@ -18,6 +18,14 @@ def create_tables():
         type TEXT NOT NULL,
          establishment_year TEXT,
          showroom_address TEXT)''')
+   
+   cursor.execute('''create table if not exists showrooms
+    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+     name TEXT,
+     city TEXT,
+     location TEXT,
+     phone TEXT,
+     image TEXT)''')
    conn.commit()
    print("user table completed!")
 

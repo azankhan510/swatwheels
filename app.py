@@ -18,10 +18,6 @@ if not os.path.exists(UPLOAD_FOLDER):
 users_list = []
 cars_list = []
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 @app.route('/register', methods=['GET', 'POST'])
 def registaration():
     if request.method == 'POST':
@@ -325,8 +321,97 @@ def upload_car_images_route(car_id):
     save_car_images(car_id, files)
     return redirect('/car/' + str(car_id))   
 
-     
-   
+def get_all_cars():
+    conn = sqlite3.connect("swat_wheels.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM cars ORDER BY id DESC")
+    cars = cur.fetchall()
+    conn.close()
+    return cars
+
+def get_models_for_brand(brand):
+    models = {
+        "Daihatsu": ["Mira", "Mira ES", "Move", "Move Custom", "Tanto", "Cast", "Cast Style", "Terios Kid", "Hijet", "Cuore", "Boon", "Thor"],
+        "Suzuki": ["Alto Japan", "Wagon R Japan", "Hustler", "Spacia", "Solio", "Every Wagon", "Every", "Swift Japan", "Mehran", "Cultus", "Bolan"],
+        "Toyota": ["Passo", "Vitz", "Aqua", "Prius", "Camry", "Corolla", "Yaris", "Fortuner", "Hilux", "Land Cruiser", "C-HR", "Roomy", "Tank"],
+        "Honda": ["N-Box", "N-One", "N-WGN", "Fit", "Vezel", "Freed", "City", "Civic", "Accord"],
+        "Kia": ["Sportage", "Picanto", "Sorento", "Stonic", "Carnival", "Morning"],
+        "Hyundai": ["Tucson", "Elantra", "Sonata", "Santa Fe", "Porter", "Eon"]
+    }
+    return models.get(brand, [])
+
+def search_cars_db(brand="", model="", budget="", fuel="", transmission=""):
+    conn = sqlite3.connect("swat_wheels.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    query = "SELECT * FROM cars WHERE 1=1"
+    params = []
+
+    if brand:
+        query += " AND brand = ?"
+        params.append(brand)
+    if model:
+        query += " AND model = ?"
+        params.append(model)
+    if fuel:
+        query += " AND fuel = ?"
+        params.append(fuel)
+    if transmission:
+        query += " AND transmission = ?"
+        params.append(transmission)
+    if budget == "under_10":
+        query += " AND price < 1000000"
+    elif budget == "10_20":
+        query += " AND price BETWEEN 1000000 AND 2000000"
+    elif budget == "20_30":
+        query += " AND price BETWEEN 2000000 AND 3000000"
+
+    cur.execute(query, params)
+    cars = cur.fetchall()
+    conn.close()
+    return cars
+
+@app.route('/')
+def home():
+    cars = get_all_cars()
+    shwrooms = get_all_showrooms()
+    return render_template('index.html', cars=cars, showrooms=shwrooms)
+
+def get_all_showrooms():
+    conn = sqlite3.connect("swat_wheels.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM showrooms ORDER BY id DESC")
+    showrooms = cur.fetchall()
+    conn.close()
+    return showrooms
+
+def get_showroom_by_id(showroom_id):
+    conn = sqlite3.connect("swat_wheels.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM showrooms WHERE id = ?", (showroom_id,))
+    showroom = cur.fetchone()
+    conn.close()
+    return showroom
+
+def get_cars_by_showroom(showroom_id):
+    conn = sqlite3.connect("swat_wheels.db")
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM cars WHERE showroom_id = ?", (showroom_id,))
+    cars = cur.fetchall()
+    conn.close()
+    return cars
+
+@app.route('/showroom/<int:showroom_id>')
+def showroom_detail(showroom_id):
+    showroom = get_showroom_by_id(showroom_id)
+    cars = get_cars_by_showroom(showroom_id)
+    return render_template('showroom.html', showroom=showroom, cars=cars)
+
 if __name__ == '__main__':
              port = int (os. environ.get('port',5000))
              app.run(host='0.0.0.0', port=port, debug= True)
