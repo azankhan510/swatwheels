@@ -30,11 +30,11 @@ body {
   font-weight: bold;
   letter-spacing: 1px;
   margin-top: 10px;
-  color: #ffd700;
+  color: #d5abab;
 }
 
 .cars-hero {
-  background: white;
+  background: rgb(88, 83, 83);
   max-width: 900px;
   margin: -30px auto 30px auto;
   padding: 20px;
@@ -43,34 +43,38 @@ body {
   position: relative;
   z-index: 10;
 }
-
 .tabs {
   display: flex;
-  gap: 10px;
+  border-bottom: 1px solid #ddd;
   margin-bottom: 15px;
-  align-items: center;
 }
 
-.tabs button.active, .tabs a {
+.tab-btn {
+  flex: 1;
+  background: white;
   border: none;
-  background: #f0f0f0;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-weight: bold;
+  border-bottom: 3px solid transparent;
+  padding: 15px 5px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
   cursor: pointer;
-  text-decoration: none;
+}
+
+.tab-btn.active {
   color: black;
-  font-size: 14px;
+  font-weight: 800;
+  border-bottom: 3px solid black;
 }
 
 .tabs button.active {
-  background: #0a2540;
+  background: #3d444b;
   color: white;
 }
 
 .search-box {
   display: flex;
-  border: 2px solid #ddd;
+  border: 2px solid #575555;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -112,7 +116,7 @@ body {
 }
 
 .filters button {
-  background: #5721e5;
+  background: #525058;
   color: white;
   border: none;
   padding: 12px 25px;
