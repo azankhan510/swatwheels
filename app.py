@@ -5,7 +5,7 @@ import sqlite3
 import os
 import time
 from werkzeug.utils import secure_filename
-from database import add_car_db
+from database import add_car_db, get_car_by_id
 from database import get_all_cars, get_connection
 from database import add_user , get_user
 app = Flask(__name__)
@@ -93,8 +93,8 @@ def search_cars():
     print("searching for :", budget)
     print("searching for :",fuel)
     print("searching for:",transmission)
-
-    return render_template ("search.html")
+    cars = search_cars_db(brand, engine_cc, year, model, budget, fuel, transmission)
+    return render_template ("search.html", cars=cars)
 
 @app.route('/add_car', methods = ['get','post'])
 def add_car():
@@ -248,7 +248,7 @@ def update_profile_photo(user_id, file):
     if path:
             conn = sqlite3.connect('car_market.db')
             cursor = conn.cursor()
-            cursor.execute("UPDATE users SET profile_photo = ? WHERE id = ?"(path,user_id))
+            cursor.execute("UPDATE users SET profile_photo = ? WHERE id = ?", (path,user_id))
             conn.commit()
             conn.close
             return True
@@ -435,6 +435,17 @@ def special_search():
 
     showrooms = get_all_showrooms()
     return render_template('special_search.html', cars=cars, showrooms=showrooms, selected_city=city, selected_showroom=showroom_id)
+
+@app.route('/car/<int:car_id>')
+def car_detail(car_id):
+    car = get_car_by_id(car_id)
+    return render_template('car_detail.html', car=car)
+
+
+
+
+
+
 
 if __name__ == '__main__':
              port = int (os. environ.get('port',5000))

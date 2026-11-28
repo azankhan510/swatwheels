@@ -130,6 +130,45 @@ def get_all_showrooms():
     conn.close()
     return showrooms
 
+def search_car_db(brand, engine_cc, year, model, budget, fuel, transmission):
+     conn = get_connection()
+     cursor = conn.cursor()
+     query = "select * FROM cars WHERE 1=1"
+     params =[]
+     if brand:
+        query+= "AND BRAND LIKE ?"
+        params.append(f"%{brand}%")
+     if fuel:
+        query+= "AND FUEL = ?"
+        params.append(fuel)
+     if engine_cc:
+        query+= "AND ENGINE_CC = ?"
+        params.append(engine_cc)
+     if year:
+        query+= "AND YEAR = ?"
+        params.append(year)
+     if model:
+        query+= "AND MODEL = ?"
+        params.append(model)
+     if budget:
+        query+= "AND PRICE <= ?"
+        params.append(budget)
+     if transmission:
+        query+= "AND TRANSMISSION = ?"
+        params.append(transmission)
+     cursor.execute(query, params)
+     cars = cursor.fetchall()                
+     conn.close()
+     return cars
+
+def get_car_by_id(car_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM cars WHERE id = ?", (car_id,))
+    car = cursor.fetchone()
+    conn.close()
+    return car
+     
 if __name__ == "__main__":
     create_tables()
 
