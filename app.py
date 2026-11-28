@@ -441,12 +441,6 @@ def car_detail(car_id):
     car = get_car_by_id(car_id)
     return render_template('car_detail.html', car=car)
 
-
-
-
-
-
-
 if __name__ == '__main__':
              port = int (os. environ.get('port',5000))
              app.run(host='0.0.0.0', port=port, debug= True)
